@@ -4,6 +4,7 @@ import (
 	"api/src/models"
 	"fmt"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type Users struct {
@@ -15,20 +16,18 @@ func NewRepositoryUsers(db *gorm.DB) *Users {
 }
 
 func (u *Users) Create(user models.Users) models.Users {
-	u.db.Create(&user)
+	u.db.Debug().Create(&user)
 	return user
 }
 func (u *Users) List(param string) []models.Users {
 	var user []models.Users
 	param = fmt.Sprintf("%%%s%%", param)
-	u.db.Where("name like ? or nick like ?", param, param).Find(&user)
-	//u.db.Where("name like ? or nick like ?", param,param).Preload(clause.Associations).
-	//		Find(&user)
+	u.db.Debug().Where("name like ? or nick like ?", param, param).Preload(clause.Associations).Find(&user)
 	return user
 }
 func (u *Users) Find(param uint64) models.Users {
 	var user models.Users
-	u.db.Where("id = ?", param).Preload("Friends").Preload("Posts.Likes").Find(&user)
+	u.db.Debug().Where("id = ?", param).Preload("Friends").Preload("Posts.Likes").Find(&user)
 	return user
 }
 func (u *Users) Update(param uint64, user models.Users) models.Users {
