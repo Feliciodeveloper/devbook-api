@@ -15,9 +15,11 @@ func NewRepositoryUsers(db *gorm.DB) *Users {
 	return &Users{db}
 }
 
-func (u *Users) Create(user models.Users) models.Users {
-	u.db.Debug().Create(&user)
-	return user
+func (u *Users) Create(user models.Users) (models.Users, error) {
+	if err := u.db.Create(&user).Error; err != nil {
+		return models.Users{}, err
+	}
+	return user, nil
 }
 func (u *Users) List(param string) []models.Users {
 	var user []models.Users
