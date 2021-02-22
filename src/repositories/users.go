@@ -3,6 +3,7 @@ package repositories
 import (
 	"api/src/models"
 	"fmt"
+
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -62,7 +63,7 @@ func (u *Users) AddFriend(ID, IDFriend uint) error {
 func (u *Users) ListFriends(ID uint) ([]models.Users, error) {
 	var users []models.Users
 	u.db.First(&users, ID)
-	if err := u.db.Model(&users).Association("Friends").Find(&users); err != nil {
+	if err := u.db.Debug().Model(&users).Association("Friends").Find(&users); err != nil {
 		return []models.Users{}, err
 	}
 	return users, nil
